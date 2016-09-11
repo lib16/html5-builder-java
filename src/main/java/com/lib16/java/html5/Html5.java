@@ -49,119 +49,15 @@ public final class Html5 implements Language
 		return new Html5(xml.append("title", title));
 	}
 
-	public Html5 base(String href, Target target)
+	public Html5 base(String href)
 	{
-		return new Html5(xml.append("base")).setTarget(target);
+		return base(href, null);
 	}
 
-//	public Html5Element link(Rel rel, String href,
-//			String title, String type, String hreflang, Media media, String sizes)
-//	{
-//		return Html5Element.create(xml.append("link"))
-//				.setRel(rel)
-//				.setHref(href)
-//				.setType(type)
-//				.setMedia(media)
-//				.setTitle(title)
-//				.setHreflang(hreflang)
-//				.setSizes(sizes);
-//	}
-//
-//	/**
-//	 * A css link.
-//	 *
-//	 * @param  string   href       Address of the hyperlink.
-//	 * @param  string  	media      Applicable media.
-//	 * @param  string   title      Title of the link.
-//	 * @param  boolean  alternate  Whether it is an alternate stylesheet or not.
-//	 * @return Html5
-//	 */
-//	public Html5Element stylesheet(href, media, title, alternate = false)
-//	{
-//		rel = (alternate ? "alternate " : "") . "stylesheet";
-//		return this.link(rel, href, title, null, null, media);
-//	}
-//
-//	/**
-//	 * A css link.
-//	 *
-//	 * @param  string   href       Address of the hyperlink.
-//	 * @param  string   media      Applicable media.
-//	 * @param  string   title      Title of the link.
-//	 * @param  boolean  alternate  Whether it is an alternate stylesheet or not.
-//	 * @return Html5
-//	 */
-//	public Html5Element css(href, media, title, alternate = false)
-//	{
-//		return this.stylesheet(href, media, title, alternate);
-//	}
-//
-//	/**
-//	 * A link to an alternative version of the page.
-//	 *
-//	 * @param  string  href      Address of the hyperlink.
-//	 * @param  string  title     Title of the link.
-//	 * @param  string  type      Hint for the type of the referenced resource.
-//	 * @param  string  hreflang  Language of the linked resource.
-//	 * @param  string  media     Applicable media.
-//	 * @return Html5
-//	 */
-//	public Html5Element alternate(href, title = null, type = null, hreflang = null, media = null)
-//	{
-//		return this.link("alternate", href, title, type, hreflang, media);
-//	}
-//
-//	/**
-//	 * A atom feed link.
-//	 *
-//	 * @param  string  href   Address of the hyperlink.
-//	 * @param  string  title  Title of the link.
-//	 * @return Html5
-//	 */
-//	public Html5Element atom(href, title = null)
-//	{
-//		return this.alternate(href, title, "application/atom+xml");
-//	}
-//
-//	/**
-//	 * A rss-feed link
-//	 *
-//	 * @param  string  href   Address of the hyperlink.
-//	 * @param  string  title  Title of the link.
-//	 * @return Html5
-//	 */
-//	public Html5Element rss(href, title = null)
-//	{
-//		return this.alternate(href, title, "application/rss+xml");
-//	}
-//
-//	/**
-//	 * A link to a favicon.
-//	 *
-//	 * @param  string   href      Address of the hyperlink.
-//	 * @param  string   type      Hint for the type of the referenced resource.
-//	 * @param  string   sizes     Sizes of the icons.
-//	 * @param  boolean  shortcut  Whether to use the <code>shortcut</code> keyword or not.
-//	 * @return Html5
-//	 */
-//	public Html5Element icon(href = "favicon.ico", type = null, sizes = null, shortcut = false)
-//	{
-//		rel = shortcut ? "shortcut icon" : "icon";
-//		return this.link(rel, href, null, type, null, null, sizes);
-//	}
-//
-//	/**
-//	 * A link to a favicon using <code>shortcut icon</code>.
-//	 *
-//	 * @param  string  href   Address of the hyperlink.
-//	 * @param  string  type   Hint for the type of the referenced resource.
-//	 * @param  string  sizes  Sizes of the icons.
-//	 * @return Html5
-//	 */
-//	public Html5Element shortcut_icon(href = "favicon.ico", type = null, sizes = null)
-//	{
-//		return this.icon(href, type, sizes, true);
-//	}
+	public Html5 base(String href, Target target)
+	{
+		return new Html5(xml.append("base")).setHref(href).setTarget(target);
+	}
 
 	public Html5 meta(String name, String content)
 	{
@@ -1054,19 +950,6 @@ public final class Html5 implements Language
 	public static Html5 createSub()
 	{
 		return new Html5(Xml.createSub(new DefaultHtml5Properties()));
-	}
-
-	public static void main(String[] args)
-	{
-		Html5 html = Html5.createHtml5();
-		Html5 head = html.head();
-		head.keywords("foo").keywords("bar");
-		Html5 body = html.body();
-		body.h1("The quick brown fox jumps");
-		body.p("Lirum larum Löffelstiel");
-		body.p("Foo bar baz");
-		body.p().xml.append("br");
-		System.out.println(html.xml.getMarkup());
 	}
 
 	@Override
