@@ -3,6 +3,7 @@ package com.lib16.java.html5;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.lib16.java.utils.NumberFormatter;
+import com.lib16.java.utils.enums.IconType;
 import com.lib16.java.xml.Attributes;
 import com.lib16.java.xml.Language;
 import com.lib16.java.xml.Xml;
@@ -14,6 +15,9 @@ import com.lib16.java.xml.shared.TargetAttribute.Target;
 
 public final class Html5 implements Language
 {
+	public static final Html5Properties HTML5_PROPERTIES = new DefaultHtml5Properties();
+	public static final Html5Properties XHTML5_PROPERTIES = new DefaultXHtml5Properties();
+
 	Xml xml;
 
 	private Html5(Xml xml)
@@ -21,9 +25,42 @@ public final class Html5 implements Language
 		this.xml = xml;
 	}
 
-	public static Html5 create(Xml xml)
+	public static Html5 createHtml(Html5Properties properties, String lang, String manifest)
 	{
-		return new Html5(xml);
+		if (properties == null) {
+			properties = HTML5_PROPERTIES;
+		}
+		return new Html5(Xml.createRoot("html", properties))
+				.setLang(lang)
+				.setManifest(manifest);
+	}
+
+	public static Html5 createHtml(String lang, String manifest)
+	{
+		return createHtml(null, lang, manifest);
+	}
+
+	public static Html5 createHtml(Html5Properties properties)
+	{
+		return createHtml(properties, null, null);
+	}
+
+	public static Html5 createHtml()
+	{
+		return createHtml(null);
+	}
+
+	public static Html5 createSub(Html5Properties properties)
+	{
+		if (properties == null) {
+			properties = HTML5_PROPERTIES;
+		}
+		return new Html5(Xml.createSub(properties));
+	}
+
+	public static Html5 createSub()
+	{
+		return createSub(null);
 	}
 
 	public Html5 parent()
@@ -41,7 +78,7 @@ public final class Html5 implements Language
 
 	public Html5 head()
 	{
-		return new Html5(xml.append("head", "")).charset().parent(); // TODO parent()!!!
+		return new Html5(xml.append("head", "")).charset().parent();
 	}
 
 	public Html5 title(String title)
@@ -57,6 +94,97 @@ public final class Html5 implements Language
 	public Html5 base(String href, Target target)
 	{
 		return new Html5(xml.append("base")).setHref(href).setTarget(target);
+	}
+
+	public Html5 link(String href, Rel... rel)
+	{
+		Html5 element = new Html5(xml.append("link"))
+				.setRel(rel)
+				.setHref(href);
+		element.xml.getAttributes().setNull("type", "media", "title", "hreflang", "sizes");
+		return element;
+	}
+
+	/**
+	 * A stylesheet link.
+	 */
+	public Html5 stylesheet(String href, Media media, String title)
+	{
+		return link(href, new Rel[] {title == null ? null : Rel.ALTERNATE, Rel.STYLESHEET})
+				.setMedia(media)
+				.setTitle(title);
+	}
+
+	/**
+	 * A stylesheet link.
+	 */
+	public Html5 stylesheet(String href, Media media)
+	{
+		return stylesheet(href, media, null);
+	}
+
+	/**
+	 * A stylesheet link.
+	 */
+	public Html5 stylesheet(String href)
+	{
+		return stylesheet(href, null);
+	}
+
+	/**
+	 * Appends {@code <link rel="alternate" …}.
+	 */
+	public Html5 alternate(String href, String type, String title)
+	{
+		return link(href, Rel.ALTERNATE).setType(type).setTitle(title);
+	}
+
+	/**
+	 * An atom feed link.
+	 */
+	public Html5 atom(String href)
+	{
+		return atom(href, null);
+	}
+
+	/**
+	 * An atom feed link.
+	 */
+	public Html5 atom(String href, String title)
+	{
+		return alternate(href, "application/atom+xml", title);
+	}
+
+	/**
+	 * A rss-feed link
+	 */
+	public Html5 rss(String href)
+	{
+		return rss(href, null);
+	}
+
+	/**
+	 * A rss-feed link
+	 */
+	public Html5 rss(String href, String title)
+	{
+		return alternate(href, "application/rss+xml", title);
+	}
+
+	/**
+	 * A link to a favicon.
+	 */
+	public Html5 icon(String href, IconType type)
+	{
+		return icon(href, type, null);
+	}
+
+	/**
+	 * A link to a favicon.
+	 */
+	public Html5 icon(String href, IconType type, String sizes)
+	{
+		return link(href, Rel.ICON).setType(type).setSizes(sizes);
 	}
 
 	public Html5 meta(String name, String content)
@@ -124,6 +252,20 @@ public final class Html5 implements Language
 		Html5 element = new Html5(xml.append("meta"));
 		element.xml.getAttributes()
 				.set("charset", xml.getLanguageProperties().getCharacterEncoding());
+		return element;
+	}
+
+	public Html5 style(String style)
+	{
+		Html5 element = new Html5(xml.append("style"));
+		element.xml.appendText(style);
+		return element;
+	}
+
+	public Html5 script(String script)
+	{
+		Html5 element = new Html5(xml.append("script"));
+		element.xml.appendText(script);
 		return element;
 	}
 
@@ -817,6 +959,23 @@ public final class Html5 implements Language
 		return this;
 	}
 
+	public Html5 setLang(String lang)
+	{
+		if (xml.getLanguageProperties().htmlModeEnabled()) {
+			xml.getAttributes().set("lang", lang);
+		}
+		else {
+			xml.setLang(lang);
+		}
+		return this;
+	}
+
+	public Html5 setManifest(String manifest)
+	{
+		xml.getAttributes().set("manifest", manifest);
+		return this;
+	}
+
 	public Html5 setMedia(Media... media)
 	{
 		MediaAttribute.setMedia(xml, media);
@@ -851,9 +1010,7 @@ public final class Html5 implements Language
 
 	public Html5 setRel(Rel... rel)
 	{
-		for (Rel r: rel) {
-			xml.getAttributes().setComplex("rel", " ", true, r.toString());
-		}
+		xml.getAttributes().setEnum("rel", " ", rel);
 		return this;
 	}
 
@@ -928,6 +1085,12 @@ public final class Html5 implements Language
 		return this;
 	}
 
+	public Html5 setType(IconType type)
+	{
+		xml.getAttributes().setEnum("type", type);
+		return this;
+	}
+
 	public Html5 setValue(String value)
 	{
 		xml.getAttributes().set("value", value);
@@ -938,18 +1101,6 @@ public final class Html5 implements Language
 	{
 		xml.getAttributes().setNumber("value", value, getFormatter());
 		return this;
-	}
-
-	public static Html5 createHtml5()
-	{
-		Xml xml = Xml.createRoot("html", new DefaultHtml5Properties());
-		Html5 html = new Html5(xml);
-		return html;
-	}
-
-	public static Html5 createSub()
-	{
-		return new Html5(Xml.createSub(new DefaultHtml5Properties()));
 	}
 
 	@Override

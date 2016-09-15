@@ -4,6 +4,8 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.lib16.java.utils.enums.IconType;
+import com.lib16.java.xml.shared.MediaAttribute.Media;
 import com.lib16.java.xml.shared.TargetAttribute.Target;
 
 public class Html5DocumentMetadataTest
@@ -28,6 +30,62 @@ public class Html5DocumentMetadataTest
 			{
 				Html5.createSub().base("../"),
 				"<base href=\"../\">"
+			},
+			{
+				Html5.createSub().stylesheet("style.css"),
+				"<link rel=\"stylesheet\" href=\"style.css\">"
+			},
+			{
+				Html5.createSub().stylesheet("screen.css", Media.SCREEN),
+				"<link rel=\"stylesheet\" href=\"screen.css\" media=\"screen\">"
+			},
+			{
+				Html5.createSub().stylesheet("contrast.css", null, "High Contrast"),
+				"<link"
+						+ " rel=\"alternate stylesheet\" href=\"contrast.css\""
+						+ " title=\"High Contrast\">"
+			},
+			{
+				Html5.createSub().stylesheet("contrast.css", Media.SCREEN, "High Contrast"),
+				"<link"
+						+ " rel=\"alternate stylesheet\" href=\"contrast.css\""
+						+ " media=\"screen\" title=\"High Contrast\">"
+			},
+			{
+				Html5.createSub().atom("feed.xml"),
+				"<link"
+						+ " rel=\"alternate\" href=\"feed.xml\""
+						+ " type=\"application/atom+xml\">"
+			},
+			{
+				Html5.createSub().atom("feed.xml", "Atom Feed"),
+				"<link"
+						+ " rel=\"alternate\" href=\"feed.xml\""
+						+ " type=\"application/atom+xml\" title=\"Atom Feed\">"
+			},
+			{
+				Html5.createSub().rss("feed.xml"),
+				"<link"
+						+ " rel=\"alternate\" href=\"feed.xml\""
+						+ " type=\"application/rss+xml\">"
+			},
+			{
+				Html5.createSub().rss("feed.xml", "RSS Feed"),
+				"<link"
+						+ " rel=\"alternate\" href=\"feed.xml\""
+						+ " type=\"application/rss+xml\" title=\"RSS Feed\">"
+			},
+			{
+				Html5.createSub().icon("favicon.ico", IconType.ICO),
+				"<link"
+						+ " rel=\"icon\" href=\"favicon.ico\""
+						+ " type=\"image/vnd.microsoft.icon\">"
+			},
+			{
+				Html5.createSub().icon("favicon.ico", IconType.ICO, "16x16 32x32"),
+				"<link"
+						+ " rel=\"icon\" href=\"favicon.ico\""
+						+ " type=\"image/vnd.microsoft.icon\" sizes=\"16x16 32x32\">"
 			},
 			{
 				Html5.createSub().meta("my-name", "my content"),
@@ -69,6 +127,17 @@ public class Html5DocumentMetadataTest
 				Html5.createSub().charset(),
 				"<meta charset=\"UTF-8\">"
 			},
+			{
+				Html5.createSub().body().style("h1 {\n\tfont-size: 20px;\n}"),
+				"<body>\n\t<style>\n\t\th1 {\n\t\t\tfont-size: 20px;\n\t\t}"
+						+ "\n\t</style>\n</body>"
+			},
+			{
+				Html5.createSub().body().script("/*\n *\n */"),
+				"<body>\n\t<script>\n\t\t/*\n\t\t *\n\t\t */"
+						+ "\n\t</script>\n</body>"
+			},
+
 		};
 	}
 

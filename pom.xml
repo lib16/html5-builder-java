@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.lib16</groupId>
 	<artifactId>html5-builder</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Lib16 HTML5 Builder</name>
 	<description>Lib16 HTML5 Builder for Java 8 is a library for creating HTML5 documents.</description>
 	<url>http://lib16.com</url>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.lib16</groupId>
 			<artifactId>xml-builder</artifactId>
-			<version>[1.1.1,2)</version>
+			<version>1.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
